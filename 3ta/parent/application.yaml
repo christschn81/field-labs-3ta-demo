@@ -12,7 +12,7 @@ spec:
     directory:
       recurse: true
   destination:
-    server: 'https://argocd.vcf.lab:443'
+    server: 'https://10.1.0.2:443'
     namespace: ns01
   syncPolicy:
     automated:

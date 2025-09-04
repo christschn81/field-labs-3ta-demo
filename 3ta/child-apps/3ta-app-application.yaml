@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/KBrookfield/3ta-demo'
+    repoURL: 'https://github.com/christschn81/field-labs-3ta-demo'
     targetRevision: main
     path: 3ta/apps/3ta-app
     directory:
