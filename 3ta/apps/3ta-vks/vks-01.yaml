@@ -2,7 +2,7 @@ apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
   name: vks-01
-  namespace: dev-w6vw5
+  namespace: ns01
 spec:
   clusterNetwork:
     pods:
@@ -13,7 +13,8 @@ spec:
         - 10.96.0.0/12
     serviceDomain: cluster.local
   topology:
-    class: builtin-generic-v3.3.0
+    class: builtin-generic-v3.4.0
+    classNamespace: vmware-syste-vks-public
     version: v1.33.1---vmware.1-fips-vkr.2
     variables:
       - name: kubernetes
@@ -24,7 +25,7 @@ spec:
       - name: vmClass
         value: best-effort-xsmall
       - name: storageClass
-        value: vi1-paris-cl01-vsan
+        value: cluster-wld01-01a-vsan-storage-policy
     controlPlane:
       replicas: 1
       metadata:
