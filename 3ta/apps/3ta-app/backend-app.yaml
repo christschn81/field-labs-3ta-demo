@@ -1,22 +1,20 @@
 apiVersion: v1
-kind: Service
-metadata:
-  name: backend-app
-  namespace: demo
-spec:
-  selector:
-    app: backend-app
-  ports:
-    - name: http
-      port: 5050
-      targetPort: 5050
+kind: Secret
+metadata:  
+  name: backend-app-secret
+type: Opaque
+data:
+  mysql_user: ZGV2b3Bz
+  db_passwd: cGFzc3dvcmQ=
+  #mysql_host: <BASE64_ENCODED_IP_FOR_MYSQL_VM>
+  mysql_host: MTkyLjE2OC4zMC42MA==
+  db_name: ZGVtbw==
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-app-deployment
-  namespace: demo
   labels:
     app: backend-app
 spec:
@@ -28,51 +26,45 @@ spec:
     metadata:
       labels:
         app: backend-app
-      annotations:
-        vault.hashicorp.com/agent-inject: 'true'
-        vault.hashicorp.com/role: 'dev-w6vw5'
-        vault.hashicorp.com/agent-inject-secret-dbcreds: 'secret/data/dev-w6vw5/dbcreds'
-        vault.hashicorp.com/tls-skip-verify: 'true'
-        vault.hashicorp.com/secret-volume-path: "/app/vault/secrets"
-        vault.hashicorp.com/agent-inject-file-dbcreds: "db.env"
-        vault.hashicorp.com/agent-run-as-user: "10001"
-        vault.hashicorp.com/agent-inject-perms-dbcreds: "0440"
-        vault.hashicorp.com/agent-inject-template-dbcreds: |
-          {{- with secret "secret/data/dev-w6vw5/dbcreds" -}}
-          DB_NAME={{ .Data.data.DB_NAME }}
-          DB_USER={{ .Data.data.DB_USER }}
-          DB_PASSWORD={{ .Data.data.DB_PASSWORD }}
-          {{- end }}
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 10001
-        runAsGroup: 10001
-      serviceAccountName: test-service-account
-      volumes:
-        - name: vault-token
-          secret:
-            secretName: test-service-account-token
       containers:
         - name: backend-app
-          image: jswolf059/backend:v2.0.0
-          imagePullPolicy: Always
-          volumeMounts:
-          - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-            name: vault-token
+          image: harbor.vmw.lab/3ta/backend:latest
           ports:
-            - containerPort: 5050
+            - containerPort: 5000
           env:
           - name: MYSQL_HOST
-            value: 32.32.0.11
+            valueFrom:
+              secretKeyRef:
+                name: backend-app-secret
+                key: mysql_host
+                optional: false
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: backend-app-secret
+                key: mysql_user
+                optional: false 
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: backend-app-secret
+                key: db_passwd
+                optional: false 
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: backend-app-secret
+                key: db_name
+                optional: false 
       imagePullSecrets:
       - name: docker-hub-creds
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: backend-app-service
-  namespace: demo
 spec:
   selector:
     app: backend-app
@@ -82,3 +74,4 @@ spec:
       port: 5000
       targetPort: 5000
   type: LoadBalancer
+  #loadBalancerIP: 192.168.30.61
