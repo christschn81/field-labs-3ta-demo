@@ -36,7 +36,7 @@ spec:
             topologyKey: kubernetes.io/hostname
       containers:
         - name: frontend-app
-          image: harbor.vmw.lab/3ta/frontend:latest
+          image: jswolf059/frontend:v2.0.0
           ports:
             - containerPort: 5000
           env:

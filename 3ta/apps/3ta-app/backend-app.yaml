@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: backend-app
-          image: harbor.vmw.lab/3ta/backend:latest
+          image: jswolf059/backend:v2.0.0
           ports:
             - containerPort: 5000
           env:
