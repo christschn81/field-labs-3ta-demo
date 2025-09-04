@@ -8,9 +8,9 @@ spec:
   source:
     repoURL: 'https://github.com/christschn81/field-labs-3ta-demo'
     targetRevision: main
-    path: 3ta/child-apps    
+    path: 3ta/child-apps
     directory:
-      recurse: true   
+      recurse: true
   destination:
     server: 'https://argocd.vcf.lab:443'
     namespace: ns01
