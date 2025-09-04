@@ -17,7 +17,7 @@ spec:
         args:
           - |
             echo "Waiting for kubeconfig to be available..."
-            while ! kubectl get secret vks-01-kubeconfig -n argocd -o jsonpath='{.data.value}' | base64 -d > /tmp/vks-01-kubeconfig; do
+            while ! kubectl get secret vks-01-kubeconfig -n ns01 -o jsonpath='{.data.value}' | base64 -d > /tmp/vks-01-kubeconfig; do
               sleep 5
             done
 
